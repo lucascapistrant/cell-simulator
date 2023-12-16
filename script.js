@@ -1,17 +1,18 @@
 const canvas = document.getElementById("simCanvas");
 const ctx = canvas.getContext("2d");
 
-const plantGrowthChance = 0.05;
-const plantGrowthDistance = 50;
-const herbivoreLifespan = 2000;
-const carnivoreLifespan = 3000;
+const starterGreen = 100;
+const starterBlue = 10;
+const starterRed = 4;
 
 const herbivoreVisionDiameter = 50;
 const carnivoreVisionDiameter = 200;
 
-const starterGreen = 100;
-const starterBlue = 10;
-const starterRed = 4;
+const plantGrowthChance = 0.05;
+const plantGrowthDistance = 50;
+
+const herbivoreLifespan = 2000;
+const carnivoreLifespan = 3000;
 
 let greenPopulation = starterGreen;
 let bluePopulation = starterBlue;
@@ -122,6 +123,20 @@ function moveCarnivoreToPray(carnivore, prey) {
         carnivore.y += Math.sin(angle) * speed;
     }
 }
+function repulseCarnivoreFromPlant(carnivore, plant) {
+    const dx = plant.x - carnivore.x;
+    const dy = plant.y - carnivore.y;
+    const distance = Math.sqrt(dx ** 2 + dy ** 2);
+
+    // Check if the plant is within the carnivor's line of vision
+    if (distance <= carnivoreVisionDiameter / 2) {
+        // Move away from plant
+        const speed = 1; // Adjust the speed as needed
+        const angle = Math.atan2(dy, dx);
+        carnivore.x -= Math.cos(angle) * speed;
+        carnivore.y -= Math.sin(angle) * speed;
+    }
+}
 
 function eatGreenCell(herbivore, green) {
     const distance = Math.sqrt((herbivore.x - green.x) ** 2 + (herbivore.y - green.y) ** 2);
@@ -167,6 +182,17 @@ function updateCanvas() {
         // Move towards the nearest prey if it exists
         if (nearestPrey.prey) {
             moveCarnivoreToPray(carnivore, nearestPrey.prey);
+        }
+
+        // move away from plants
+        const nearestPlant = greenCells.reduce((nearest, plant) => {
+            const carnivoreToplantDistance = Math.sqrt((carnivore.x - plant.x) ** 2 + (carnivore.y - plant.y) ** 2);
+            return carnivoreToplantDistance < nearest.distance ? { plant, distance: carnivoreToplantDistance } : nearest;
+        }, { plant: null, distance: Infinity });
+
+        // Move towards the nearest plant if it exists
+        if (nearestPlant.plant) {
+            repulseCarnivoreFromPlant(carnivore, nearestPlant.plant);
         }
     });
 
