@@ -2,16 +2,26 @@ const canvas = document.getElementById("simCanvas");
 const ctx = canvas.getContext("2d");
 
 const plantGrowthChance = 0.05;
+const plantGrowthDistance = 50;
 const herbivoreLifespan = 2000;
-const herbivoreVisionDiameter = 100;
+const carnivoreLifespan = 3000;
+
+const herbivoreVisionDiameter = 50;
+const carnivoreVisionDiameter = 200;
+
 const starterGreen = 100;
 const starterBlue = 10;
-const plantGrowthDistance = 50;
+const starterRed = 4;
+
+let greenPopulation = starterGreen;
+let bluePopulation = starterBlue;
+let redPopulation = starterRed;
 
 // Define cell properties
 const cellDiameter = 10;
 const plantCellColor = "#00FF00"; // Green
 const herbivoreCellColor = "#0000FF"; // Blue
+const carnivoreCellColor = '#ff0000'; // Red
 
 // Initial cells
 // Generate a random x and y coordinate within the canvas boundaries
@@ -30,6 +40,10 @@ let herbivoreCells = Array.from({ length: starterBlue }, () => ({
     ...getRandomCoordinate(),
     lifespan: herbivoreLifespan
 }));
+let carnivoreCells = Array.from({ length: starterRed }, () => ({
+    ...getRandomCoordinate(),
+    lifespan: carnivoreLifespan
+}));
 
 
 function drawCell(x, y, color) {
@@ -43,6 +57,7 @@ function drawCell(x, y, color) {
 function drawCells() {
     greenCells.forEach(cell => drawCell(cell.x, cell.y, plantCellColor));
     herbivoreCells.forEach(cell => drawCell(cell.x, cell.y, herbivoreCellColor));
+    carnivoreCells.forEach(cell => drawCell(cell.x, cell.y, carnivoreCellColor));
 }
 
 function duplicatePlantCell(cell) {
@@ -60,7 +75,7 @@ function duplicatePlantCell(cell) {
     }
 }
 
-function moveHerbivoreCell(cell) {
+function moveCell(cell, type) {
     // Adjust the x and y coordinates for movement
     cell.x += Math.random() * 4 - 2; // Random horizontal movement (-2 to 2)
     cell.y += Math.random() * 4 - 2; // Random vertical movement (-2 to 2)
@@ -74,7 +89,8 @@ function moveHerbivoreCell(cell) {
 
     // Check if the cell's lifespan has reached zero, remove it
     if (cell.lifespan <= 0) {
-        herbivoreCells = herbivoreCells.filter(c => c !== cell);
+        if(type === 'herbivore') herbivoreCells = herbivoreCells.filter(c => c !== cell);
+        if(type === 'carnivore') carnivoreCells = carnivoreCells.filter(c => c !== cell);
     }
 }
 
@@ -92,6 +108,20 @@ function moveHerbivoreToPlant(herbivore, plant) {
         herbivore.y += Math.sin(angle) * speed;
     }
 }
+function moveCarnivoreToPray(carnivore, prey) {
+    const dx = prey.x - carnivore.x;
+    const dy = prey.y - carnivore.y;
+    const distance = Math.sqrt(dx ** 2 + dy ** 2);
+
+    // Check if the prey is within the carnivor's line of vision
+    if (distance <= carnivoreVisionDiameter / 2) {
+        // Move towards the prey
+        const speed = 1; // Adjust the speed as needed
+        const angle = Math.atan2(dy, dx);
+        carnivore.x += Math.cos(angle) * speed;
+        carnivore.y += Math.sin(angle) * speed;
+    }
+}
 
 function eatGreenCell(herbivore, green) {
     const distance = Math.sqrt((herbivore.x - green.x) ** 2 + (herbivore.y - green.y) ** 2);
@@ -102,9 +132,18 @@ function eatGreenCell(herbivore, green) {
         greenCells = greenCells.filter(cell => cell !== green); // Remove eaten green cell
     }
 }
+function eatBlueCell(carnivore, prey) {
+    const distance = Math.sqrt((carnivore.x - prey.x) ** 2 + (carnivore.y - prey.y) ** 2);
+
+    if (distance < cellDiameter) {
+        // red cell is in contact with a prey cell, "eat" it
+        carnivoreCells.push({ x: prey.x, y: prey.y, lifespan: carnivoreLifespan }); // Duplicate red cell with reset lifespan
+        herbivoreCells = herbivoreCells.filter(cell => cell !== prey); // Remove eaten blue cell
+    }
+}
 
 function updateCanvas() {
-    // Update logic for herbivore cell movement towards plants
+    // Update logic for herbivore cell movement towards plantss
     herbivoreCells.forEach(herbivore => {
         // Find the nearest plant cell
         const nearestPlant = greenCells.reduce((nearest, plant) => {
@@ -117,27 +156,53 @@ function updateCanvas() {
             moveHerbivoreToPlant(herbivore, nearestPlant.plant);
         }
     });
-    // Update logic for herbivore cell movement
-    herbivoreCells.forEach(cell => moveHerbivoreCell(cell));
+    // Update logic for herbivore cell movement towards plantss
+    carnivoreCells.forEach(carnivore => {
+        // Find the nearest plant cell
+        const nearestPrey = herbivoreCells.reduce((nearest, prey) => {
+            const carnivoreTopreyDistance = Math.sqrt((carnivore.x - prey.x) ** 2 + (carnivore.y - prey.y) ** 2);
+            return carnivoreTopreyDistance < nearest.distance ? { prey, distance: carnivoreTopreyDistance } : nearest;
+        }, { prey: null, distance: Infinity });
 
-    // Update logic for blue cell eating
+        // Move towards the nearest prey if it exists
+        if (nearestPrey.prey) {
+            moveCarnivoreToPray(carnivore, nearestPrey.prey);
+        }
+    });
+
+    // Update logic for herbivore cell movement
+    herbivoreCells.forEach(cell => moveCell(cell, 'herbivore'));
+    carnivoreCells.forEach(cell => moveCell(cell, 'carnivore'));
+
+    // Update logic for cell eating
     herbivoreCells.forEach(herbivore => {
         greenCells.forEach(green => eatGreenCell(herbivore, green));
+    });
+    carnivoreCells.forEach(carnivore => {
+        herbivoreCells.forEach(blue => eatBlueCell(carnivore, blue));
     });
 
     // Redraw canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawCells();
+
+    // Get population sizes
+    greenPopulation = greenCells.length;
+    bluePopulation = herbivoreCells.length;
+    redPopulation = carnivoreCells.length;
 }
 
 function growPlants() {
     // Update logic for plant cell duplication
     greenCells.forEach(cell => duplicatePlantCell(cell));
+    if(bluePopulation === 0 & redPopulation === 0) endGame();
 }
 
+let gameTick = undefined;
+let plantGrowth = undefined;
 function simulate() {
-    setInterval(updateCanvas, 10);  // Update every 100th of a second
-    setInterval(growPlants, 1000);  // Update every second 
+    gameTick = setInterval(updateCanvas, 10);  // Update every 100th of a second
+    plantGrowth = setInterval(growPlants, 1000);  // Update every second 
 }
 
 
@@ -147,3 +212,7 @@ drawCells();
 // Start simulation
 simulate();
 
+function endGame() {
+    clearInterval(gameTick);
+    clearInterval(plantGrowth);
+}
