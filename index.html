@@ -7,7 +7,22 @@
     <title>Cell Life Simulator</title>
   </head>
   <body>
-    <canvas id="simCanvas" width="900" height="900"></canvas>
-    <script src="script.js"></script>
+    <div class="settings"></div>
+    <div class="simulation">
+      <div class="controls">
+        <button class="controls-btn" id="startBtn">Start</button>
+        <button class="controls-btn" id="pauseBtn">Pause</button>
+        <button class="controls-btn" id="restartBtn">Restart</button>
+      </div>
+      <canvas id="simCanvas" width="900" height="900"></canvas>
+    </div>
+    <div class="stats">
+      <div class="populationGraph" id="PlantPopulation"></div>
+      <div class="populationGraph" id="HerbivorePopulation"></div>
+      <div class="populationGraph" id="CarnivorePopulation"></div>
+    </div>
+
+    <script type="module" src="script.js"></script>
+    <script type="module" src="webpage.js"></script>
   </body>
 </html>

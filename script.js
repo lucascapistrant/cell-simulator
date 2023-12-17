@@ -12,7 +12,7 @@ const plantGrowthChance = 0.05;
 const plantGrowthDistance = 50;
 
 const herbivoreLifespan = 2000;
-const carnivoreLifespan = 3000;
+const carnivoreLifespan = 1500;
 
 let greenPopulation = starterGreen;
 let bluePopulation = starterBlue;
@@ -35,7 +35,6 @@ function getRandomCoordinate() {
 
 // Initialize green cells with random positions
 let greenCells = Array.from({ length: starterGreen }, () => getRandomCoordinate());
-
 // Initialize herbivore cells with random positions and lifespan
 let herbivoreCells = Array.from({ length: starterBlue }, () => ({
     ...getRandomCoordinate(),
@@ -45,7 +44,6 @@ let carnivoreCells = Array.from({ length: starterRed }, () => ({
     ...getRandomCoordinate(),
     lifespan: carnivoreLifespan
 }));
-
 
 function drawCell(x, y, color) {
     ctx.beginPath();
@@ -117,7 +115,7 @@ function moveCarnivoreToPray(carnivore, prey) {
     // Check if the prey is within the carnivor's line of vision
     if (distance <= carnivoreVisionDiameter / 2) {
         // Move towards the prey
-        const speed = 1; // Adjust the speed as needed
+        const speed = 2; // Adjust the speed as needed
         const angle = Math.atan2(dy, dx);
         carnivore.x += Math.cos(angle) * speed;
         carnivore.y += Math.sin(angle) * speed;
@@ -135,6 +133,20 @@ function repulseCarnivoreFromPlant(carnivore, plant) {
         const angle = Math.atan2(dy, dx);
         carnivore.x -= Math.cos(angle) * speed;
         carnivore.y -= Math.sin(angle) * speed;
+    }
+}
+function repulseHerbivoreFromCarnivore(herbivore, carnivore) {
+    const dx = carnivore.x - herbivore.x;
+    const dy = carnivore.y - herbivore.y;
+    const distance = Math.sqrt(dx ** 2 + dy ** 2);
+
+    // Check if the carnivore is within the carnivor's line of vision
+    if (distance <= herbivoreVisionDiameter / 2) {
+        // Move away from carnivore
+        const speed = 1; // Adjust the speed as needed
+        const angle = Math.atan2(dy, dx);
+        herbivore.x -= Math.cos(angle) * speed;
+        herbivore.y -= Math.sin(angle) * speed;
     }
 }
 
@@ -169,6 +181,17 @@ function updateCanvas() {
         // Move towards the nearest plant if it exists
         if (nearestPlant.plant) {
             moveHerbivoreToPlant(herbivore, nearestPlant.plant);
+        }
+
+        // move away from carnviores
+        const nearestCarnivore = carnivoreCells.reduce((nearest, carnivore) => {
+            const herbivoreToCarnivoreDistance = Math.sqrt((herbivore.x - carnivore.x) ** 2 + (herbivore.y - carnivore.y) ** 2);
+            return herbivoreToCarnivoreDistance < nearest.distance ? { carnivore, distance: herbivoreToCarnivoreDistance } : nearest;
+        }, { carnivore: null, distance: Infinity });
+
+        // Move towards the nearest carnivore if it exists
+        if (nearestCarnivore.carnivore) {
+            repulseHerbivoreFromCarnivore(herbivore, nearestCarnivore.carnivore);
         }
     });
     // Update logic for herbivore cell movement towards plantss
@@ -226,19 +249,28 @@ function growPlants() {
 
 let gameTick = undefined;
 let plantGrowth = undefined;
-function simulate() {
+function startGame() {
+    drawCells();
     gameTick = setInterval(updateCanvas, 10);  // Update every 100th of a second
     plantGrowth = setInterval(growPlants, 1000);  // Update every second 
 }
 
-
-// Initial draw
-drawCells();
-
-// Start simulation
-simulate();
-
 function endGame() {
-    clearInterval(gameTick);
-    clearInterval(plantGrowth);
+    clearInterval(gameTick); // stops updating canvas & cells
+    clearInterval(plantGrowth);  // stops plant growth
 }
+
+function resetGame() {
+    greenCells = Array.from({ length: starterGreen }, () => getRandomCoordinate());
+    // Initialize herbivore cells with random positions and lifespan
+    herbivoreCells = Array.from({ length: starterBlue }, () => ({
+        ...getRandomCoordinate(),
+        lifespan: herbivoreLifespan
+    }));
+    carnivoreCells = Array.from({ length: starterRed }, () => ({
+        ...getRandomCoordinate(),
+        lifespan: carnivoreLifespan
+    }));
+}
+
+export {startGame, endGame, resetGame, redPopulation, bluePopulation};
