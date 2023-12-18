@@ -273,4 +273,4 @@ function resetGame() {
     }));
 }
 
-export {startGame, endGame, resetGame, redPopulation, bluePopulation};
+export {startGame, endGame, resetGame, redPopulation, bluePopulation, greenPopulation};

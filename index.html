@@ -17,9 +17,27 @@
       <canvas id="simCanvas" width="900" height="900"></canvas>
     </div>
     <div class="stats">
-      <div class="populationGraph" id="PlantPopulation"></div>
-      <div class="populationGraph" id="HerbivorePopulation"></div>
-      <div class="populationGraph" id="CarnivorePopulation"></div>
+      <div class="populationGraph" id="PlantPopulation">
+        <div class="graph-header">
+          <p>Plant Population</p>
+          <div class="count" id="greenPopulation"></div>
+        </div>
+        <div class="graph-body" id="greenGraph"></div>
+      </div>
+      <div class="populationGraph" id="HerbivorePopulation">
+        <div class="graph-header">
+          <p>Herbivore Population</p>
+          <div class="count" id="bluePopulation"></div>
+        </div>
+        <div class="graph-body" id="blueGraph"></div>
+      </div>
+      <div class="populationGraph" id="CarnivorePopulation">
+        <div class="graph-header">
+          <p>Carnivore Population</p>
+          <div class="count" id="redPopulation"></div>
+        </div>
+        <div class="graph-body" id="redGraph"></div>
+      </div>
     </div>
 
     <script type="module" src="script.js"></script>
