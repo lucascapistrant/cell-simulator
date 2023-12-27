@@ -7,8 +7,222 @@
     <title>Cell Life Simulator</title>
   </head>
   <body>
-    <div class="settings"></div>
+    <div class="settings">
+      <h2 class="section-header">Settings</h2>
+      <div class="input-group">
+        <div class="slider">
+          <label for="startGreen">Green Starter Population</label>
+          <input
+            type="range"
+            name="startGreen"
+            id="startGreen"
+            min="0"
+            max="1000"
+            step="5"
+            value="100"
+          />
+          <div class="number" id="startGreenCounter">100</div>
+        </div>
+        <div class="slider">
+          <label for="startBlue">Blue Starter Population</label>
+          <input
+            type="range"
+            name="startBlue"
+            id="startBlue"
+            min="0"
+            max="1000"
+            step="5"
+            value="10"
+          />
+          <div class="number" id="startBlueCounter">10</div>
+        </div>
+        <div class="slider">
+          <label for="startRed">Red Starter Population</label>
+          <input
+            type="range"
+            name="startRed"
+            id="startRed"
+            min="0"
+            max="1000"
+            step="5"
+            value="4"
+          />
+          <div class="number" id="startRedCounter">4</div>
+        </div>
+      </div>
+      <div class="input-group">
+        <div class="slider">
+          <label for="herbVisDiameter">Herbivore Vision Diameter</label>
+          <input
+            type="range"
+            name="herbVisDiameter"
+            id="herbVisDiameter"
+            min="0"
+            max="2000"
+            step="10"
+            value="50"
+          />
+          <div class="number" id="herbVisDiameterCounter">50</div>
+        </div>
+        <div class="slider">
+          <label for="carnVisDiameter">Carnivore Vision Diameter</label>
+          <input
+            type="range"
+            name="carnVisDiameter"
+            id="carnVisDiameter"
+            min="0"
+            max="2000"
+            step="10"
+            value="200"
+          />
+          <div class="number" id="carnVisDiameterCounter">200</div>
+        </div>
+      </div>
+      <div class="input-group">
+        <div class="slider">
+          <label for="plantGrowthDistance">Plant Growth Spacing</label>
+          <input
+            type="range"
+            name="plantGrowthDistance"
+            id="plantGrowthDistance"
+            min="0"
+            max="2000"
+            step="10"
+            value="200"
+          />
+          <div class="number" id="plantGrowthDistanceCounter">200</div>
+        </div>
+        <div class="slider">
+          <label for="plantGrowthChance">Plant Growth Speed</label>
+          <input
+            type="range"
+            name="plantGrowthChance"
+            id="plantGrowthChance"
+            min="0"
+            max="1"
+            step=".01"
+            value=".05"
+          />
+          <div class="number" id="plantGrowthChanceCounter">0.05</div>
+        </div>
+      </div>
+      <div class="input-group">
+        <div class="slider">
+          <label for="herbivoreLifespan">Herbivore Lifespan</label>
+          <input
+            type="range"
+            name="herbivoreLifespan"
+            id="herbivoreLifespan"
+            min="0"
+            max="10000"
+            step="100"
+            value="2000"
+          />
+          <div class="number" id="herbivoreLifespanCounter">2000</div>
+        </div>
+        <div class="slider">
+          <label for="carnivoreLifespan">Carnivore Lifespan</label>
+          <input
+            type="range"
+            name="carnivoreLifespan"
+            id="carnivoreLifespan"
+            min="0"
+            max="10000"
+            step="100"
+            value="1500"
+          />
+          <div class="number" id="carnivoreLifespanCounter">1500</div>
+        </div>
+      </div>
+      <div class="input-group">
+        <div class="slider">
+          <label for="herbivoreAttractSpeed">Herbivore Chase Speed</label>
+          <input
+            type="range"
+            name="herbivoreAttractSpeed"
+            id="herbivoreAttractSpeed"
+            min="0"
+            max="20"
+            step="0.5"
+            value="1"
+          />
+          <div class="number" id="herbivoreAttractSpeedCounter">1</div>
+        </div>
+        <div class="slider">
+          <label for="carnivoreAttractSpeed">Carnivore Chase Speed</label>
+          <input
+            type="range"
+            name="carnivoreAttractSpeed"
+            id="carnivoreAttractSpeed"
+            min="0"
+            max="20"
+            step="0.5"
+            value="2"
+          />
+          <div class="number" id="carnivoreAttractSpeedCounter">2</div>
+        </div>
+        <div class="slider">
+          <label for="herbivoreRepulseSpeed">Herbivore Fear Speed</label>
+          <input
+            type="range"
+            name="herbivoreRepulseSpeed"
+            id="herbivoreRepulseSpeed"
+            min="0"
+            max="20"
+            step="0.5"
+            value=".5"
+          />
+          <div class="number" id="herbivoreRepulseSpeedCounter">0.5</div>
+        </div>
+        <div class="slider">
+          <label for="carnivoreRepulseSpeed">Carnivore Fear Speed</label>
+          <input
+            type="range"
+            name="carnivoreRepulseSpeed"
+            id="carnivoreRepulseSpeed"
+            min="0"
+            max="20"
+            step="0.5"
+            value=".2"
+          />
+          <div class="number" id="carnivoreRepulseSpeedCounter">0.2</div>
+        </div>
+      </div>
+      <div class="input-group">
+        <div class="slider">
+          <label for="herbivoreCellsToReproduce"
+            >Herbivore Cells Needed to Reproduce</label
+          >
+          <input
+            type="range"
+            name="herbivoreCellsToReproduce"
+            id="herbivoreCellsToReproduce"
+            min="1"
+            max="20"
+            step="1"
+            value="4"
+          />
+          <div class="number" id="herbivoreCellsToReproduceCounter">4</div>
+        </div>
+        <div class="slider">
+          <label for="carnivoreCellsToReproduce"
+            >Carnivore Cells Needed to Reproduce</label
+          >
+          <input
+            type="range"
+            name="carnivoreCellsToReproduce"
+            id="carnivoreCellsToReproduce"
+            min="1"
+            max="20"
+            step="1"
+            value="4"
+          />
+          <div class="number" id="carnivoreCellsToReproduceCounter">4</div>
+        </div>
+      </div>
+    </div>
     <div class="simulation">
+      <h1 class="header">Cell Simulator</h1>
       <div class="controls">
         <button class="controls-btn" id="startBtn">Start</button>
         <button class="controls-btn" id="pauseBtn">Pause</button>
@@ -39,7 +253,6 @@
         <div class="graph-body" id="redGraph"></div>
       </div>
     </div>
-
     <script type="module" src="script.js"></script>
     <script type="module" src="webpage.js"></script>
   </body>

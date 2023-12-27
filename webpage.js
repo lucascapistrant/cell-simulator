@@ -61,8 +61,13 @@ function restart() {
     resetGame();
     start();
     gamePlaying = true;
+    clearGraphs();
+}
+
+function clearGraphs() {
     greenGraph.innerHTML = "";
     blueGraph.innerHTML = "";
     redGraph.innerHTML = "";
 }
 
+export { clearGraphs };

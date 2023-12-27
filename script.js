@@ -1,22 +1,82 @@
+import { clearGraphs } from './webpage.js';
+
 const canvas = document.getElementById("simCanvas");
 const ctx = canvas.getContext("2d");
 
-const starterGreen = 100;
-const starterBlue = 10;
-const starterRed = 4;
+let starterGreen = 100;
+let starterBlue = 10;
+let starterRed = 4;
 
-const herbivoreVisionDiameter = 50;
-const carnivoreVisionDiameter = 200;
+let herbivoreVisionDiameter = 50;
+let carnivoreVisionDiameter = 200;
 
-const plantGrowthChance = 0.05;
-const plantGrowthDistance = 50;
+let plantGrowthChance = 0.05;
+let plantGrowthDistance = 200;
 
-const herbivoreLifespan = 2000;
-const carnivoreLifespan = 1500;
+let herbivoreLifespan = 2000;
+let carnivoreLifespan = 1500;
+
+let herbivoreAttractSpeed = 1;
+let herbivoreRepulseSpeed = .5;
+
+let carnivoreAttractSpeed = 2;
+let carnivoreRepulseSpeed = .2;
+
+let herbivoreCellsToReproduce = 4;
+let carnivoreCellsToReproduce = 4;
+
+
+let greenCells;
+let herbivoreCells;
+let carnivoreCells;
+
+// Controls
+const startGreenSlider = document.getElementById('startGreen');
+const startBlueSlider = document.getElementById('startBlue');
+const startRedSlider = document.getElementById('startRed');
+
+const herbVisDiameterSlider = document.getElementById('herbVisDiameter');
+const carnVisDiameterSlider = document.getElementById('carnVisDiameter');
+
+const plantGrowthDistanceSlider = document.getElementById('plantGrowthDistance');
+const plantGrowthChanceSlider = document.getElementById('plantGrowthChance');
+
+const herbivoreLifespanSlider = document.getElementById('herbivoreLifespan');
+const carnivoreLifespanSlider = document.getElementById('carnivoreLifespan');
+
+const herbivoreAttractSpeedSlider = document.getElementById('herbivoreAttractSpeed');
+const carnivoreAttractSpeedSlider = document.getElementById('carnivoreAttractSpeed');
+const herbivoreRepulseSpeedSlider = document.getElementById('herbivoreRepulseSpeed');
+const carnivoreRepulseSpeedSlider = document.getElementById('carnivoreRepulseSpeed');
+
+const herbivoreCellsToReproduceSlider = document.getElementById('herbivoreCellsToReproduce');
+const carnivoreCellsToReproduceSlider = document.getElementById('carnivoreCellsToReproduce');
+
+startGreenSlider.addEventListener('input',  () => {starterGreen = startGreenSlider.value; startGreenCounter.innerHTML = startGreenSlider.value; initializeCellPopulations()});
+startBlueSlider.addEventListener('input',  () => {starterBlue = startBlueSlider.value; startBlueCounter.innerHTML = startBlueSlider.value; initializeCellPopulations()});
+startRedSlider.addEventListener('input',  () => {starterRed = startRedSlider.value; startRedCounter.innerHTML = startRedSlider.value; initializeCellPopulations()});
+
+herbVisDiameterSlider.addEventListener('input', () => {herbivoreVisionDiameter = herbVisDiameterSlider.value; herbVisDiameterCounter.innerHTML = herbVisDiameterSlider.value; initializeCellPopulations()})
+carnVisDiameterSlider.addEventListener('input', () => {carnivoreVisionDiameter = carnVisDiameterSlider.value; carnVisDiameterCounter.innerHTML = carnVisDiameterSlider.value; initializeCellPopulations()})
+
+plantGrowthDistanceSlider.addEventListener('input', () => {plantGrowthDistance = plantGrowthDistanceSlider.value; plantGrowthDistanceCounter.innerHTML = plantGrowthDistanceSlider.value; initializeCellPopulations(); console.log(plantGrowthDistance)})
+plantGrowthChanceSlider.addEventListener('input', () => {plantGrowthChance = plantGrowthChanceSlider.value; plantGrowthChanceCounter.innerHTML = plantGrowthChanceSlider.value; initializeCellPopulations()})
+
+herbivoreLifespanSlider.addEventListener('input', () => {herbivoreLifespan = herbivoreLifespanSlider.value; herbivoreLifespanCounter.innerHTML = herbivoreLifespanSlider.value; initializeCellPopulations()})
+carnivoreLifespanSlider.addEventListener('input', () => {carnivoreLifespan = carnivoreLifespanSlider.value; carnivoreLifespanCounter.innerHTML = carnivoreLifespanSlider.value; initializeCellPopulations()})
+
+herbivoreAttractSpeedSlider.addEventListener('input', () => {herbivoreAttractSpeed = herbivoreAttractSpeedSlider.value; herbivoreAttractSpeedCounter.innerHTML = herbivoreAttractSpeedSlider.value; initializeCellPopulations()})
+carnivoreAttractSpeedSlider.addEventListener('input', () => {carnivoreAttractSpeed = carnivoreAttractSpeedSlider.value; carnivoreAttractSpeedCounter.innerHTML = carnivoreAttractSpeedSlider.value; initializeCellPopulations()})
+herbivoreRepulseSpeedSlider.addEventListener('input', () => {herbivoreRepulseSpeed = herbivoreRepulseSpeedSlider.value; herbivoreRepulseSpeedCounter.innerHTML = herbivoreRepulseSpeedSlider.value; initializeCellPopulations()})
+carnivoreRepulseSpeedSlider.addEventListener('input', () => {carnivoreRepulseSpeed = carnivoreRepulseSpeedSlider.value; carnivoreRepulseSpeedCounter.innerHTML = carnivoreRepulseSpeedSlider.value; initializeCellPopulations()})
+
+herbivoreCellsToReproduceSlider.addEventListener('input', () => {herbivoreCellsToReproduce = herbivoreCellsToReproduceSlider.value; herbivoreCellsToReproduceCounter.innerHTML = herbivoreCellsToReproduceSlider.value; initializeCellPopulations()})
+carnivoreCellsToReproduceSlider.addEventListener('input', () => {carnivoreCellsToReproduce = carnivoreCellsToReproduceSlider.value; carnivoreCellsToReproduceCounter.innerHTML = carnivoreCellsToReproduceSlider.value; initializeCellPopulations()})
 
 let greenPopulation = starterGreen;
 let bluePopulation = starterBlue;
 let redPopulation = starterRed;
+initializeCellPopulations();
 
 // Define cell properties
 const cellDiameter = 10;
@@ -32,18 +92,22 @@ function getRandomCoordinate() {
         y: Math.random() * canvas.height
     };
 }
-
-// Initialize green cells with random positions
-let greenCells = Array.from({ length: starterGreen }, () => getRandomCoordinate());
-// Initialize herbivore cells with random positions and lifespan
-let herbivoreCells = Array.from({ length: starterBlue }, () => ({
-    ...getRandomCoordinate(),
-    lifespan: herbivoreLifespan
-}));
-let carnivoreCells = Array.from({ length: starterRed }, () => ({
-    ...getRandomCoordinate(),
-    lifespan: carnivoreLifespan
-}));
+function initializeCellPopulations() {
+    // Initialize green cells with random positions
+    greenCells = Array.from({ length: starterGreen }, () => getRandomCoordinate());
+    // Initialize herbivore cells with random positions and lifespan
+    herbivoreCells = Array.from({ length: starterBlue }, () => ({
+        ...getRandomCoordinate(),
+        lifespan: herbivoreLifespan,
+        cellsEaten: 0
+    }));
+    carnivoreCells = Array.from({ length: starterRed }, () => ({
+        ...getRandomCoordinate(),
+        lifespan: carnivoreLifespan,
+        cellsEaten: 0
+    }));
+    clearGraphs();
+}
 
 function drawCell(x, y, color) {
     ctx.beginPath();
@@ -63,8 +127,8 @@ function duplicatePlantCell(cell) {
     const duplicationChance = Math.random();
     if (duplicationChance <= plantGrowthChance) {
         // Duplicate the cell with slight variation in position
-        const newX = cell.x + (Math.random() * 50 - plantGrowthDistance);
-        const newY = cell.y + (Math.random() * 50 - plantGrowthDistance);
+        const newX = cell.x + (Math.random() * plantGrowthDistance);
+        const newY = cell.y + (Math.random() * plantGrowthDistance);
 
         // Boundary checks to prevent plants from growing outside the canvas
         const boundedX = Math.max(0, Math.min(canvas.width, newX));
@@ -101,10 +165,9 @@ function moveHerbivoreToPlant(herbivore, plant) {
     // Check if the plant is within the herbivore's line of vision
     if (distance <= herbivoreVisionDiameter / 2) {
         // Move towards the plant
-        const speed = 1; // Adjust the speed as needed
         const angle = Math.atan2(dy, dx);
-        herbivore.x += Math.cos(angle) * speed;
-        herbivore.y += Math.sin(angle) * speed;
+        herbivore.x += Math.cos(angle) * herbivoreAttractSpeed;
+        herbivore.y += Math.sin(angle) * herbivoreAttractSpeed;
     }
 }
 function moveCarnivoreToPray(carnivore, prey) {
@@ -115,10 +178,9 @@ function moveCarnivoreToPray(carnivore, prey) {
     // Check if the prey is within the carnivor's line of vision
     if (distance <= carnivoreVisionDiameter / 2) {
         // Move towards the prey
-        const speed = 2; // Adjust the speed as needed
         const angle = Math.atan2(dy, dx);
-        carnivore.x += Math.cos(angle) * speed;
-        carnivore.y += Math.sin(angle) * speed;
+        carnivore.x += Math.cos(angle) * carnivoreAttractSpeed;
+        carnivore.y += Math.sin(angle) * carnivoreAttractSpeed;
     }
 }
 function repulseCarnivoreFromPlant(carnivore, plant) {
@@ -129,10 +191,9 @@ function repulseCarnivoreFromPlant(carnivore, plant) {
     // Check if the plant is within the carnivor's line of vision
     if (distance <= carnivoreVisionDiameter / 2) {
         // Move away from plant
-        const speed = 1; // Adjust the speed as needed
         const angle = Math.atan2(dy, dx);
-        carnivore.x -= Math.cos(angle) * speed;
-        carnivore.y -= Math.sin(angle) * speed;
+        carnivore.x -= Math.cos(angle) * carnivoreRepulseSpeed;
+        carnivore.y -= Math.sin(angle) * carnivoreRepulseSpeed;
     }
 }
 function repulseHerbivoreFromCarnivore(herbivore, carnivore) {
@@ -143,10 +204,9 @@ function repulseHerbivoreFromCarnivore(herbivore, carnivore) {
     // Check if the carnivore is within the carnivor's line of vision
     if (distance <= herbivoreVisionDiameter / 2) {
         // Move away from carnivore
-        const speed = 1; // Adjust the speed as needed
         const angle = Math.atan2(dy, dx);
-        herbivore.x -= Math.cos(angle) * speed;
-        herbivore.y -= Math.sin(angle) * speed;
+        herbivore.x -= Math.cos(angle) * herbivoreRepulseSpeed;
+        herbivore.y -= Math.sin(angle) * herbivoreRepulseSpeed;
     }
 }
 
@@ -154,18 +214,28 @@ function eatGreenCell(herbivore, green) {
     const distance = Math.sqrt((herbivore.x - green.x) ** 2 + (herbivore.y - green.y) ** 2);
 
     if (distance < cellDiameter) {
+        herbivore.cellsEaten++;
         // Blue cell is in contact with a green cell, "eat" it
-        herbivoreCells.push({ x: green.x, y: green.y, lifespan: herbivoreLifespan }); // Duplicate blue cell with reset lifespan
+        if(herbivore.cellsEaten >= herbivoreCellsToReproduce) {
+            herbivoreCells.push({ x: green.x, y: green.y, lifespan: herbivoreLifespan, cellsEaten: 0 })
+            herbivore.cellsEaten = 0;
+        }
         greenCells = greenCells.filter(cell => cell !== green); // Remove eaten green cell
+        herbivore.lifespan += (herbivoreLifespan / 3);
     }
 }
 function eatBlueCell(carnivore, prey) {
     const distance = Math.sqrt((carnivore.x - prey.x) ** 2 + (carnivore.y - prey.y) ** 2);
-
+    
     if (distance < cellDiameter) {
+        carnivore.cellsEaten++;
         // red cell is in contact with a prey cell, "eat" it
-        carnivoreCells.push({ x: prey.x, y: prey.y, lifespan: carnivoreLifespan }); // Duplicate red cell with reset lifespan
+        if(carnivore.cellsEaten >= carnivoreCellsToReproduce) {
+            carnivoreCells.push({ x: prey.x, y: prey.y, lifespan: carnivoreLifespan, cellsEaten: 0})
+            carnivore.cellsEaten = 0;
+        }
         herbivoreCells = herbivoreCells.filter(cell => cell !== prey); // Remove eaten blue cell
+        carnivore.lifespan += (carnivoreLifespan / 3);
     }
 }
 
@@ -261,16 +331,7 @@ function endGame() {
 }
 
 function resetGame() {
-    greenCells = Array.from({ length: starterGreen }, () => getRandomCoordinate());
-    // Initialize herbivore cells with random positions and lifespan
-    herbivoreCells = Array.from({ length: starterBlue }, () => ({
-        ...getRandomCoordinate(),
-        lifespan: herbivoreLifespan
-    }));
-    carnivoreCells = Array.from({ length: starterRed }, () => ({
-        ...getRandomCoordinate(),
-        lifespan: carnivoreLifespan
-    }));
+    initializeCellPopulations();
 }
 
 export {startGame, endGame, resetGame, redPopulation, bluePopulation, greenPopulation};

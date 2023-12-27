@@ -30,7 +30,7 @@ canvas {
     max-width: 700px;
 }
 
-/* Population Graphs */
+/* Population Graphs (right) */
 .populationGraph {
     width: 95%;
     border: 1px solid #fff;
@@ -77,4 +77,35 @@ canvas {
 }
 #redGraph .graph-bar {
     background-color: #ff0000;
+}
+
+/* Controls (left) */
+.settings {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100vh;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+.input-group {
+    margin: 20px;
+}
+
+.slider {
+    font-size: 2rem;
+    background: #fff;
+    height: fit-content;
+    padding: 10px;
+    display: grid;
+    grid-template-columns: 4fr 2fr 1fr;
+    align-items: center;
+    font-size: 2rem;
+    margin: 5px 0;
+    border-radius: 10px;
+}
+
+.number {
+    margin-left: 20px;
 }
