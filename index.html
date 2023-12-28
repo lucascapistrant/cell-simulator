@@ -7,18 +7,105 @@
     <title>Cell Life Simulator</title>
   </head>
   <body>
+    <div id="instructions">
+      <button id="instructions__x-btn">X</button>
+      <h2 class="instructions__header">Instructions</h2>
+      <h3 class="instructions__subheading">Subheading</h3>
+      <p class="instructions__body">
+        Welcome to my cell simulator! This project has been a few weeks in the
+        making, serving as a practical test of my coding skills. This project is
+        not perfect, but it offers an engaging exploration of simulated
+        ecosystems.
+      </p>
+      <p class="instructions__body">
+        The simulation operates within a three-layered food chain, starting with
+        the stationary primary consumers (green) at the base. These cells
+        replicate over time. Next, there are mobile primary consumers (blue)
+        that gradually move about. Whenever a plant cell enters their field of
+        vision (determined by the vision diameter), they approach and "eat" it.
+        Lastly, there are the secondary consumers (red), which function
+        similarly to the blue cells but feed on the blue herbivores.
+      </p>
+      <h3 class="instructions__subheading">Rules:</h3>
+      <ul class="instructions__list">
+        <li class="instructions__list--item">
+          <p class="instructions__body">
+            Blue cells are attracted to green cells.
+          </p>
+        </li>
+        <li class="instructions__list--item">
+          <p class="instructions__body">
+            Blue cells are repelled by red cells.
+          </p>
+        </li>
+        <li class="instructions__list--item">
+          <p class="instructions__body">
+            Red cells are attracted to blue cells.
+          </p>
+        </li>
+        <li class="instructions__list--item">
+          <p class="instructions__body">
+            Red cells are repelled by green cells.
+          </p>
+        </li>
+        <li class="instructions__list--item">
+          <p class="instructions__body">
+            Both red and blue cells duplicate after consuming enough of their
+            prey. The reproduction threshold is adjustable via the "Cells needed
+            to reproduce" control.
+          </p>
+        </li>
+        <li class="instructions__list--item">
+          <p class="instructions__body">
+            Blue and red cells die if they fail to eat enough prey. Once they
+            eat a cell, their time left alive extends by one-third of their
+            initial duration. Lifespan parameters are controlled by the
+            "herbivore" or "carnivore lifespan" sliders, quantified in 100ths of
+            a second.
+          </p>
+        </li>
+      </ul>
+      <p class="instructions__body">
+        I made the red be repelled by the plants for no practical reason: It
+        just creates cooler patterns!
+      </p>
+      <h3 class="instructions__subheading">Disclaimers:</h3>
+      <ul class="instructions__list">
+        <li class="instructions__list--item">
+          <p class="instructions__body">
+            While JavaScript serves as the engine for this simulation, it faces
+            challenges rendering a large amount of small entities rapidly.
+            Consequently, the frame rate may decrease, and the website could
+            potentially crash, particularly when a substantial number of cells
+            are active simultaneously.
+          </p>
+        </li>
+        <li class="instructions__list--item">
+          <p class="instructions__body">
+            Achieving a stable ecosystem may prove challenging under the
+            established rules.
+          </p>
+        </li>
+      </ul>
+      <p class="instructions__body">
+        Feel free to experiment and observe the dynamics of the simulated
+        ecosystem!
+      </p>
+    </div>
     <div class="settings">
       <h2 class="section-header">Settings</h2>
+      <p class="settings__descriptor">Use arrow keys to get precise numbers</p>
       <div class="input-group">
         <div class="slider">
           <label for="startGreen">Green Starter Population</label>
           <input
+            class="input-slider"
             type="range"
             name="startGreen"
             id="startGreen"
             min="0"
             max="1000"
-            step="5"
+            step="10"
             value="100"
           />
           <div class="number" id="startGreenCounter">100</div>
@@ -26,6 +113,7 @@
         <div class="slider">
           <label for="startBlue">Blue Starter Population</label>
           <input
+            class="input-slider"
             type="range"
             name="startBlue"
             id="startBlue"
@@ -39,12 +127,13 @@
         <div class="slider">
           <label for="startRed">Red Starter Population</label>
           <input
+            class="input-slider"
             type="range"
             name="startRed"
             id="startRed"
             min="0"
             max="1000"
-            step="5"
+            step="1"
             value="4"
           />
           <div class="number" id="startRedCounter">4</div>
@@ -54,6 +143,7 @@
         <div class="slider">
           <label for="herbVisDiameter">Herbivore Vision Diameter</label>
           <input
+            class="input-slider"
             type="range"
             name="herbVisDiameter"
             id="herbVisDiameter"
@@ -67,6 +157,7 @@
         <div class="slider">
           <label for="carnVisDiameter">Carnivore Vision Diameter</label>
           <input
+            class="input-slider"
             type="range"
             name="carnVisDiameter"
             id="carnVisDiameter"
@@ -82,6 +173,7 @@
         <div class="slider">
           <label for="plantGrowthDistance">Plant Growth Spacing</label>
           <input
+            class="input-slider"
             type="range"
             name="plantGrowthDistance"
             id="plantGrowthDistance"
@@ -95,6 +187,7 @@
         <div class="slider">
           <label for="plantGrowthChance">Plant Growth Speed</label>
           <input
+            class="input-slider"
             type="range"
             name="plantGrowthChance"
             id="plantGrowthChance"
@@ -110,6 +203,7 @@
         <div class="slider">
           <label for="herbivoreLifespan">Herbivore Lifespan</label>
           <input
+            class="input-slider"
             type="range"
             name="herbivoreLifespan"
             id="herbivoreLifespan"
@@ -123,6 +217,7 @@
         <div class="slider">
           <label for="carnivoreLifespan">Carnivore Lifespan</label>
           <input
+            class="input-slider"
             type="range"
             name="carnivoreLifespan"
             id="carnivoreLifespan"
@@ -138,12 +233,13 @@
         <div class="slider">
           <label for="herbivoreAttractSpeed">Herbivore Chase Speed</label>
           <input
+            class="input-slider"
             type="range"
             name="herbivoreAttractSpeed"
             id="herbivoreAttractSpeed"
-            min="0"
+            min="-20"
             max="20"
-            step="0.5"
+            step="0.1"
             value="1"
           />
           <div class="number" id="herbivoreAttractSpeedCounter">1</div>
@@ -151,12 +247,13 @@
         <div class="slider">
           <label for="carnivoreAttractSpeed">Carnivore Chase Speed</label>
           <input
+            class="input-slider"
             type="range"
             name="carnivoreAttractSpeed"
             id="carnivoreAttractSpeed"
-            min="0"
+            min="-20"
             max="20"
-            step="0.5"
+            step="0.1"
             value="2"
           />
           <div class="number" id="carnivoreAttractSpeedCounter">2</div>
@@ -164,12 +261,13 @@
         <div class="slider">
           <label for="herbivoreRepulseSpeed">Herbivore Fear Speed</label>
           <input
+            class="input-slider"
             type="range"
             name="herbivoreRepulseSpeed"
             id="herbivoreRepulseSpeed"
-            min="0"
+            min="-20"
             max="20"
-            step="0.5"
+            step="0.1"
             value=".5"
           />
           <div class="number" id="herbivoreRepulseSpeedCounter">0.5</div>
@@ -177,23 +275,29 @@
         <div class="slider">
           <label for="carnivoreRepulseSpeed">Carnivore Fear Speed</label>
           <input
+            class="input-slider"
             type="range"
             name="carnivoreRepulseSpeed"
             id="carnivoreRepulseSpeed"
-            min="0"
+            min="-20"
             max="20"
-            step="0.5"
+            step="0.1"
             value=".2"
           />
           <div class="number" id="carnivoreRepulseSpeedCounter">0.2</div>
         </div>
       </div>
+      <p class="settings__descriptor">
+        *setting the value as a negative will make the cell change its
+        direction; instead of chasing it will run away
+      </p>
       <div class="input-group">
         <div class="slider">
           <label for="herbivoreCellsToReproduce"
             >Herbivore Cells Needed to Reproduce</label
           >
           <input
+            class="input-slider"
             type="range"
             name="herbivoreCellsToReproduce"
             id="herbivoreCellsToReproduce"
@@ -209,6 +313,7 @@
             >Carnivore Cells Needed to Reproduce</label
           >
           <input
+            class="input-slider"
             type="range"
             name="carnivoreCellsToReproduce"
             id="carnivoreCellsToReproduce"
@@ -227,28 +332,30 @@
         <button class="controls-btn" id="startBtn">Start</button>
         <button class="controls-btn" id="pauseBtn">Pause</button>
         <button class="controls-btn" id="restartBtn">Restart</button>
+        <button class="controls-btn" id="rules">?</button>
       </div>
       <canvas id="simCanvas" width="900" height="900"></canvas>
     </div>
     <div class="stats">
+      <h2 class="section-header">Statistics</h2>
       <div class="populationGraph" id="PlantPopulation">
         <div class="graph-header">
-          <p>Plant Population</p>
-          <div class="count" id="greenPopulation"></div>
+          <h3 class="graph-header__title">Plant Population</h3>
+          <div class="count" id="greenPopulation">0</div>
         </div>
         <div class="graph-body" id="greenGraph"></div>
       </div>
       <div class="populationGraph" id="HerbivorePopulation">
         <div class="graph-header">
-          <p>Herbivore Population</p>
-          <div class="count" id="bluePopulation"></div>
+          <h3 class="graph-header__title">Herbivore Population</h3>
+          <div class="count" id="bluePopulation">0</div>
         </div>
         <div class="graph-body" id="blueGraph"></div>
       </div>
       <div class="populationGraph" id="CarnivorePopulation">
         <div class="graph-header">
-          <p>Carnivore Population</p>
-          <div class="count" id="redPopulation"></div>
+          <h3 class="graph-header__title">Carnivore Population</h3>
+          <div class="count" id="redPopulation">0</div>
         </div>
         <div class="graph-body" id="redGraph"></div>
       </div>
