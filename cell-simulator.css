@@ -11,9 +11,6 @@ body {
     padding: 0;
     height: 100vh;
     background-color: #444;
-    display: grid;
-    grid-template-columns: 1fr 2fr 1fr;
-    grid-template-rows: 1fr;
 }
 
 /* typeography */
@@ -35,23 +32,42 @@ p {
     color: #999;
 }
 
+/* body grid */
+.grid {
+    display: grid;
+}
+
+@media screen and (min-width: 768px) {
+    .grid--1x3 {
+        grid-template-columns: 2fr 1fr;
+    }
+}
+
+@media screen and (min-width: 1000px) {
+    .grid--1x3 {
+        grid-template-columns: 1fr 2fr 1fr;
+    }
+}
+
 /* Simulation (middle) */
 .simulation {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
+    grid-row: 1 / span 1;
 }
 
 canvas {
     border: 1px solid #fff;
     background: #000;
-    width: 100%;
+    width: 95%;
     max-width: 700px;
 }
 
 .controls {
     margin: 10px;
-    width: 100%;
+    width: 95%;
     max-width: 700px;
     display: flex;
     justify-content: center;
@@ -84,9 +100,15 @@ canvas {
     background: #fff;
 }
 
+@media screen and (min-width: 1000px) {
+    .simulation {
+        grid-column: 2 / span 1;
+    }
+}
+
 /* Population Graphs (right) */
 .stats {
-    display: flex;
+    display: none;
     flex-direction: column;
     align-items: center;
 }
@@ -141,14 +163,17 @@ canvas {
     background-color: #ff0000;
 }
 
+@media screen and (min-width: 1000px) {
+    .stats {
+        display: flex;
+    }
+}
+
 /* Controls (left) */
 .settings {
     display: flex;
     flex-direction: column;
     align-items: center;
-    height: 100vh;
-    overflow-y: scroll;
-    overflow-x: hidden;
 }
 
 .input-group {
@@ -204,19 +229,24 @@ canvas {
     text-align: center;
 }
 
+@media screen and (min-width: 768px) {
+    .settings {
+        height: 100vh;
+        overflow-y: scroll;
+        overflow-x: hidden;
+    }
+}
+
 /* instructions */
 #instructions {
     display: none;
-    width: 70%;
+    width: 100%;
     max-width: 900px;
     z-index: 2;
     position: absolute;
     background: linear-gradient(#fff, #999);
     border: 2px solid #999;
     border-radius: 10px;
-    transform: translate(-50%, -50%);
-    left: 50%;
-    top: 50%;
     padding: 20px;
 }
 
@@ -251,4 +281,5 @@ canvas {
     border: none;
     font-size: 2rem;
     cursor: pointer;
+    background: none;
 }

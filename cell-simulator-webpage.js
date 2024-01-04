@@ -1,4 +1,4 @@
-import { startGame, endGame, resetGame, redPopulation, bluePopulation, greenPopulation } from "./script.js";
+import { startGame, endGame, resetGame, redPopulation, bluePopulation, greenPopulation } from "./cell-simulator-game.js";
 
 const startBtn = document.getElementById('startBtn');
 const restartBtn = document.getElementById('restartBtn');

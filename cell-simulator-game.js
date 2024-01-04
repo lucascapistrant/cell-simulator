@@ -1,4 +1,4 @@
-import { clearGraphs } from './webpage.js';
+import { clearGraphs } from './cell-simulator-webpage.js';
 
 const canvas = document.getElementById("simCanvas");
 const ctx = canvas.getContext("2d");
